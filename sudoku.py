@@ -2,7 +2,8 @@
 
 from collections import deque
 
-GIVENCOLOR = '\033[35m'
+GIVENCOLOR = '\033[4m'
+SOLVECOLOR = '\033[31m'
 RESETCOLOR = '\033[0m'
 
 def groupOf(x:int, y:int) -> List[List[int]]:
@@ -28,7 +29,7 @@ class cell:
         self.possibilities={1,2,3,4,5,6,7,8,9}
 
     # Cell's value has been determined
-    def setCell(self, n: int) -> None:
+    def setCell(self, n: int, isGiven=True) -> None:
         self.isGiven=True
         self.value=n
         self.possibilities=[]
@@ -43,6 +44,7 @@ class cell:
         # Only one possibility left
         if len(self.possibilities)==1:
             self.value,=self.possibilities
+            self.possibilities=[]
             return True
         # Several possibilities left
         return False
@@ -69,7 +71,7 @@ class sudoku:
                 if giv:
                     print(f"{GIVENCOLOR}"+content+f"{RESETCOLOR}",end=" | " if ((x+1)%3)==0 else "  ")
                 else:
-                    print(content,end=" | " if ((x+1)%3)==0 else "  ")
+                    print(f"{SOLVECOLOR}"+content+f"{RESETCOLOR}",end=" | " if ((x+1)%3)==0 else "  ")
             print("\n"+"~ "*16 if ((y+1)%3)==0 else "")
         if showCount: print(self.count,"/ 81\n")
         else: print()
@@ -93,26 +95,51 @@ class sudoku:
         self.splash(x,y,n)
         return True
 
-    # Last remaining cell:
-    def LRC(self) -> bool:
+    # Last remaining cell: only one cell in a group with a specific note, has to be that number
+    # Given a group, find numbers that only have one potential cell
+    # Return whether or not the cell is found to prevent infinite searching
+    def LRC(self, group: List[List[int]]) -> bool:
         found=False
+        cellsWith={i:[] for i in range(1,10)}
+        for x,y in group:
+            cell = self.workGrid[x,y]
+            for n in cell.possibilities:
+                cellsWith[n].append((x,y))
+        for n, coords in cellsWith.items():
+            if len(coords)==1:
+                found=True
+                self.count+=1
+                self.workGrid[coords[0][0],coords[0][1]].setCell(n)
+                self.splash(coords[0][0],coords[0][1],n)
+        return found
 
     # repeat usage of set using a long string
     def strSet(self, s:str, showOutput=False) -> None:
         for i, n in enumerate(s):
             if n=='0':
                 continue
-            if showOutput: self.display(self.workGrid)
-            if not self.set(i%9,int(i/9),int(n)):
-                if showOutput:
-                    print("Complete.")
-                else:
-                    self.display(self.workGrid)
-                return
             if showOutput: print("Adding", n)
-        if showOutput: print("Not enough clues.")
-        return
+            self.set(i%9,int(i/9),int(n))
+            if showOutput: self.display(self.workGrid)
 
-constEasyStr="300049000000600501752001000001000700500396000008150096003010060004000100000028000"
+        if showOutput: print("Processed all givens. LRC scanning.........")
+
+        while self.count<81:
+            change = False
+            for group in allGroups:
+                change = change or self.LRC(group)
+                if self.count>=81:
+                    break
+                if showOutput:
+                    print("Group", group[0], "F =",change)
+                    self.display(self.workGrid)
+            if not change:
+                print("Stuck.")
+                self.display(self.workGrid)
+                return
+        print("Complete.")
+        self.display(self.workGrid)
+
+constEasyStr="150082000300070010000000753000527609000000500040063807400008000703040100008600300"
 sud = sudoku()
 sud.strSet(constEasyStr)
