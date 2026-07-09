@@ -1,16 +1,16 @@
 # sudoku
 ## Usage:
-cat hard.txt | xargs ./sudoku.py
-Alternatively,
-./sudoku.py (long number)
-The number represents every sudoku cell from the top-left to the right then to the next row (reading order), with gaps replaced with 0's
+cat hard.txt | xargs ./sudoku.py  
+Alternatively,  
+./sudoku.py (long number)  
+The number represents every sudoku cell from the top-left to the right then to the next row (reading order), with gaps replaced with 0's  
 
 ## Strategy:
-Each cell begins with a set of all the nubmers from 1-9, representing possibilities
-When cells are set manually, all the other cells in the same column, row, and group have the possibility removed from their own data.
+Each cell begins with a set of all the nubmers from 1-9, representing possibilities  
+When cells are set manually, all the other cells in the same column, row, and group have the possibility removed from their own data.  
 
-From the list of sudoku methods at https://sudoku.com/sudoku-rules/, only several strategies need to be established in order to complete each puzzle
-Currently implemented:
+From the list of sudoku methods at https://sudoku.com/sudoku-rules/, only several strategies need to be established in order to complete each puzzle  
+### Currently implemented:  
 
 ### Last Possible Cell: If there is only one possibility left for a cell, it will set its own value and recursively trigger itself and other checks
 
