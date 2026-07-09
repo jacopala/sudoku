@@ -18,9 +18,13 @@ def colOf(x:int) -> List[List[int]]:
 def affectedOf(x:int,y:int) -> List[List[int]]:
     return list(set(groupOf(x,y)+rowOf(y)+colOf(x)))
 
+# iterated for Hidden Single checking
 allGroups=[groupOf(0,0),groupOf(3,0),groupOf(6,0),
            groupOf(0,3),groupOf(3,3),groupOf(6,3),
            groupOf(0,6),groupOf(3,6),groupOf(6,6)]
+# iterated for Pointing Set checking
+allCols=[colOf(i) for i in list(range(0,9))]
+allRows=[rowOf(i) for i in list(range(0,9))]
 
 class cell:
     def __init__(self):
@@ -78,12 +82,12 @@ class sudoku:
 
     # demark all nodes in shared group, column, and row
     # recursively apply demarking when new number is discovered
-    def splash(self,x:int,y:int,n:int) -> bool:
+    def splash(self,x:int,y:int,n:int) -> None:
         for cx, cy in affectedOf(x,y):
             if self.workGrid[cx,cy].demark(n):
                 self.count+=1
                 self.splash(cx,cy,self.workGrid[cx,cy].value)
-        return True
+        return
 
     # force set from given input and use above "splash" on new number
     def set(self, x:int, y:int, n:int) -> bool:
@@ -98,7 +102,7 @@ class sudoku:
     # Last remaining cell: only one cell in a group with a specific note, has to be that number
     # Given a group, find numbers that only have one potential cell
     # Return whether or not the cell is found to prevent infinite searching
-    def LRC(self, group: List[List[int]]) -> bool:
+    def HDSingles(self, group: List[List[int]]) -> bool:
         found=False
         cellsWith={i:[] for i in range(1,10)}
         for x,y in group:
@@ -112,6 +116,16 @@ class sudoku:
                 self.workGrid[coords[0][0],coords[0][1]].setCell(n)
                 self.splash(coords[0][0],coords[0][1],n)
         return found
+    def HDScan(self, showOutput=False):
+        change=True
+        while change==True:
+            change=False
+            for group in allGroups:
+                foundHDS=self.HDSingles(group)
+                if showOutput:
+                    print("Group", int(group[0][0]/3)+(group[0][1])+1,"F,",foundHDS)
+                    self.display(self.workGrid)
+                change=change or foundHDS
 
     # repeat usage of set using a long string
     def strSet(self, s:str, showOutput=False) -> None:
@@ -122,24 +136,12 @@ class sudoku:
             self.set(i%9,int(i/9),int(n))
             if showOutput: self.display(self.workGrid)
 
-        if showOutput: print("Processed all givens. LRC scanning.........")
+        if showOutput: print("Processed all givens. HDSingles scanning.........")
+        self.HDScan(showOutput)
 
-        while self.count<81:
-            change = False
-            for group in allGroups:
-                change = change or self.LRC(group)
-                if self.count>=81:
-                    break
-                if showOutput:
-                    print("Group", group[0], "F =",change)
-                    self.display(self.workGrid)
-            if not change:
-                print("Stuck.")
-                self.display(self.workGrid)
-                return
         print("Complete.")
         self.display(self.workGrid)
 
-constEasyStr="150082000300070010000000753000527609000000500040063807400008000703040100008600300"
+constEasyStr="000061000300400800060003700500700090040190020600000010400900500002300070000000000"
 sud = sudoku()
-sud.strSet(constEasyStr)
+sud.strSet(constEasyStr, True)
