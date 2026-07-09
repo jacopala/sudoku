@@ -126,7 +126,7 @@ class sudoku:
         change=True
         while change==True:
             change=False
-            for group in allGroups:
+            for group in allGroups+allRows+allCols:
                 foundHDS=self.HDSingles(group)
                 if showOutput:
                     print("Group", int(group[0][0]/3)+(group[0][1])+1,"F,",foundHDS)
