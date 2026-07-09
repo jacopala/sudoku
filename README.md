@@ -22,8 +22,8 @@ Other strategies to implement
 ### Pointing pair/triples: If the only marks for a number in a group line up, it can be used as a hint for the next row/column
 e.g.  
 1 x x | x x x | x x x  
-x x x | ? ? ? | x x x  <- Any possible placement of 1 in the middle group will result in...  
-x x x | 2 3 4 | 5 6( ) <- this spot being a 1  
+x x x | ? ? ? | x x x  <- Any possible placement of 1...
+x x x | 2 3 4 | 5 6( ) <- means this spot will be a 1  
 
 ### Hidden pair/triples: If marks match up exactly, the cells cannot be any other number  
 e.g.  
