@@ -20,13 +20,13 @@ Currently implemented:
 Other strategies to implement
 
 ### Pointing pair/triples: If the only marks for a number in a group line up, it can be used as a hint for the next row/column
-e.g.
-1 x x | x x x | x x x
-x x x | ? ? ? | x x x  <- Any possible placement of 1 in the middle group will result in...
-x x x | 2 3 4 | 5 6( ) <- this spot being a 1
+e.g.  
+1 x x | x x x | x x x  
+x x x | ? ? ? | x x x  <- Any possible placement of 1 in the middle group will result in...  
+x x x | 2 3 4 | 5 6( ) <- this spot being a 1  
 
-### Hidden pair/triples: If marks match up exactly, the cells cannot be any other number
-e.g.
-1 2 3 | 4 5 6 | 7 x x  <- One has to be 8, the other 9
-x x x | x x x | 4 5 6
-x x x | x x x | 1 2( ) <- Only number left is 3
+### Hidden pair/triples: If marks match up exactly, the cells cannot be any other number  
+e.g.  
+1 2 3 | 4 5 6 | 7 x x  <- One has to be 8, the other 9  
+x x x | x x x | 4 5 6  
+x x x | x x x | 1 2( ) <- Only number left is 3  
