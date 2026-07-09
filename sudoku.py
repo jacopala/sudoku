@@ -1,10 +1,16 @@
 #!/usr/bin/env python
-
+import sys
 from collections import deque
 
 GIVENCOLOR = '\033[4m'
 SOLVECOLOR = '\033[31m'
 RESETCOLOR = '\033[0m'
+
+inputStr=sys.argv[1]
+if len(sys.argv[1])!=81:
+    print("Incorrect size:",len(sys.argv[1]),"!=",81)
+    sys.exit()
+print("Input:", inputStr)
 
 def groupOf(x:int, y:int) -> List[List[int]]:
     xl = list(range(int(x/3)*3, (int(x/3)*3)+3))
@@ -64,21 +70,20 @@ class sudoku:
     def isComplete(self) -> bool:
         return self.count<81
 
-    def display(self, grid, showCount=True) -> None:
+    def display(self, grid, givenOnly=False) -> None:
         print("~ "*16)
         for y in range(0,9):
             print('|',end=' ')
             for x in range(0,9):
                 val = grid[x,y].value
                 giv = grid[x,y].isGiven
-                content = str(val) if val else " "
+                content = str(val) if val and (not givenOnly or giv) else " "
                 if giv:
                     print(f"{GIVENCOLOR}"+content+f"{RESETCOLOR}",end=" | " if ((x+1)%3)==0 else "  ")
                 else:
                     print(f"{SOLVECOLOR}"+content+f"{RESETCOLOR}",end=" | " if ((x+1)%3)==0 else "  ")
             print("\n"+"~ "*16 if ((y+1)%3)==0 else "")
-        if showCount: print(self.count,"/ 81\n")
-        else: print()
+        print(self.count,"/ 81\n")
 
     # demark all nodes in shared group, column, and row
     # recursively apply demarking when new number is discovered
@@ -97,6 +102,7 @@ class sudoku:
         self.count+=1
         self.workGrid[x,y].setCell(n)
         self.splash(x,y,n)
+        self.HDScan()
         return True
 
     # Last remaining cell: only one cell in a group with a specific note, has to be that number
@@ -136,12 +142,9 @@ class sudoku:
             self.set(i%9,int(i/9),int(n))
             if showOutput: self.display(self.workGrid)
 
-        if showOutput: print("Processed all givens. HDSingles scanning.........")
-        self.HDScan(showOutput)
-
         print("Complete.")
+        self.display(self.workGrid, True)
         self.display(self.workGrid)
 
-constEasyStr="000061000300400800060003700500700090040190020600000010400900500002300070000000000"
 sud = sudoku()
-sud.strSet(constEasyStr, True)
+sud.strSet(inputStr)
